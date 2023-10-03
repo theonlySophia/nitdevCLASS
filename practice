@@ -1,0 +1,205 @@
+const express = require("express");
+
+const server = express();
+
+server.use(express.json());
+
+// server.get("/profile", (req,res){
+//     req Object
+//     res Object
+    //controller functions
+// });
+// server.post("/login");
+// server.delete("/profile");
+// server.put("/profile");
+// server.use("*");
+
+// 
+
+// server.get("/home",(request,response)=>{
+//     response.json("Home Page")
+// })
+
+// server.post("/login",(request,response)=>{
+//     response.json("Login Page")
+// })
+
+// server.put("/delete profile",(request,response)=>{
+//     response.json("Delete Profile")
+// })
+
+//Admin
+/*
+  register/login (username,role,)
+  create a course
+  delete a course
+  get courses
+  get students
+  drop a student
+
+*/
+let Admin=[];
+
+// Admin = {
+//     username: excellenceyjumo,
+//     password:pass1234,
+//     role:admin
+// },
+
+let Teacher=[];
+let Student=[];
+let Course=[];
+
+// title
+// code
+// level
+server.use(express.json());
+
+//REGISTER
+//to access properties in object use dots
+//use comma to indicate that you're done with the route
+server.post('/register',(req,res)=>{
+    console.log(req,body);
+    if(req.body.role=="admin"){
+        Admin.push(req.body);
+        res.json("YOU ARE AN ADMIN")
+    }
+    if(req.body.role=="teacher"){
+        Teacher.push(req.body);
+        //if data sent is is for a teacher, push to teacher array
+        res.json("YOU ARE A TEACHER")
+    }
+    if(req.body.role=="student"){
+        Student.push(req.body);
+        res.json("YOU ARE A STUDENT")
+    }
+    else{
+        res.json("ERROR YOUR ROLE IS INVALID")
+    }
+    
+})
+
+//LOGIN
+//route is whatever you call it
+server.post("/login",(req,res)=>{
+    let information = req.body;
+    if(information.role=="admin"){
+       for(let i=0; i<Admin.length; i++){
+        if(Admin[i].username==information.username && Admin[i].password==information.password){
+            res.status(200).json("You are logged in")
+        }
+        }
+        res.status(400).json("WRONG INFO ENTERED")
+    }
+    if(information.role=="teacher"){
+        for(let i=0; i<Teacher.length; i++){
+            if(Teacher[i].username==information.username && Teacher[i].password==information.password){
+                res.status(200).json("You are logged in")
+            }
+            }
+            res.status(400).json("WRONG INFO ENTERED")
+    }
+    if(req.body.role=="student"){
+        for(let i=0; i<Student.length; i++){
+            if(Student[i].username==information.username && Student[i].password==information.password){
+                res.status(200).json("You are logged in")
+            }
+            }
+            res.status(400).json("WRONG INFO ENTERED")
+    }
+    else{
+        res.json("ERROR YOUR ROLE IS INVALID");
+    }
+
+});
+
+// create course
+server.post("/course/:role",(req,res)=>{
+    if(req.params.role=="admin"){
+        Course.push(req.body)
+        res.json("Course Created Successfully")
+    }
+    res.json("UNAUTHORIZED")
+})
+
+//get person
+
+server.get("/getadmin",(req,res)=>{
+    res.json(Admin);
+})
+
+server.get("/get-student/:role",(req,res)=>{
+    if(req.params.role=="admin"){
+        res.json(Student)
+    }
+    else{
+        res.json("UNAUTHORISED")
+
+    }
+})
+
+// get course
+server.get("/get-course",(req,res)=>{
+    res.json(Course)
+})
+
+//delete a student
+server.delete("/drop-student/:role",(req,res)=>{
+    let deletedStudent;
+    if(req.params.role === "admin"){
+        for(let i=0;i<Student.length;i++){
+            if(Student[i].username==req.body.username){
+                deletedStudent = Student.splice(i,1)
+            }
+        }
+        res.status(200).json({deletedStudent,message:"Student Deleted Succesfully"})
+    }else{
+        res.status(400).json("Unauthorized")
+    }
+})
+
+//delete a course
+server.delete("/drop-course/:role",(req,res)=>{
+    let deletedCourse;
+    if(req.params.role === "admin"){
+        for(let i=0;i<Course.length;i++){
+            if(Course[i].courseCode==req.body.courseCode){
+                deletedStudent = Student.splice(i,1)
+            }
+        res.status(200).json("Course deleted successfully")
+    }
+}else{
+        res.status(400).json("Unauthorized")
+    }
+})
+
+
+
+server.use((req,res,next)=>{
+    next("PAGE UNDER CONSTRUCTION");
+});
+
+server.use((error,req,res,next)=>{
+    console.log(error)
+    res.status(400).json(error)
+})
+
+server.listen(8000,()=>{
+    console.log("SERVER RUNNING")
+})
+
+
+
+
+// server.use((request,response)=>{
+//     response.json("Hello World")
+// })
+
+// server.listen(3000,()=>{
+//     console.log("Hello world")
+// })
+
+
+
+// localhost:3000/
+// 192.168.0.1:3000

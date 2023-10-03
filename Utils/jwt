@@ -1,0 +1,50 @@
+const bcrypt = require("bcryptjs");
+
+const secretkey = "$2a$05$A6H8YMiBqp6y2BaAlsReY";
+
+function hashPassword(password){
+    return  bcrypt.hashSync(password,5)
+}
+
+let hashed = hashPassword("ADEJUMO")
+console.log(hashed)
+
+function comparePassword(password,hash){
+    return bcrypt.compareSync(password,hash)
+}
+
+console.log(comparePassword("ADEJUMO12",hashed))
+
+
+
+const jwt = require("jsonwebtoken");
+
+const secretKey = "sdfjdsnsdsjfnsdjfndfis";
+
+function generateToken(payload) {
+  const generatedToken = jwt.sign(payload, secretKey,{expiresIn:"5s"});
+  return generatedToken;
+}
+
+async function verifyToken(token) {
+  try {
+    const decoded = await jwt.verify(token, secretKey);
+    return decoded;
+  } catch (error) {
+    throw new Error("Invalid Token");
+  }
+}
+
+let token = generateToken({ name: "adejumo" });
+
+verifyToken(token)
+  .then((decoded) => {
+    console.log(token);
+    console.log(decoded);
+  })
+  .catch((error) => {
+    console.error(error.message);
+  });
+
+
+
